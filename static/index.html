@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru-ru">
+<head>
+  <title>Потенциал поля(планшет)</title>
+  <meta charset="utf-8">
+  
+  <link rel="stylesheet" href="css/style.css">
+  
+  <script src="js/jquery-3.2.1.min.js">
+  </script>
+
+<style type="text/css">
+   #working_area {position :absolute; }
+   #working_area {overflow: auto; padding: 10px;}
+   #working_area {
+      left: 30px;
+      top: 25px;
+      right: 100px;
+ 
+   } 
+
+   body {
+    background: #c7b39b url(images/fon.jpg); /* Цвет фона и путь к файлу */
+    color: rgb(59, 128, 168); /* Цвет текста */
+   }
+
+
+    #line_height{
+        position:absolute;
+        left:10px;
+        top:149px;
+    }
+    #line_width{
+        position:absolute;  
+        left:68px;
+        top:844px;
+    }
+       
+    #work{
+        position:absolute;
+        color: aqua;
+        top:165px;
+        left:67px;
+        
+    }
+
+    #setka{
+        position:absolute;
+        color:black;
+        top:165px;
+        left:67px;
+        
+    }
+    #work_1{
+        position:absolute;
+        color: aqua;
+        top:165px;
+        left:67px;
+        
+    }
+    #plus{
+        position:absolute;
+        color: aqua;
+        top:449px;
+        left:181px;
+        
+    }
+    #minus{
+        position:absolute;
+        color: aqua;
+        top:449px;
+        left:1065px;
+        
+    }
+    #result{
+        position: absolute;
+        color: black;
+        top:200px;
+     left: 1285px;
+     font-size: 20px;
+
+    }
+
+    #result2{
+        position: absolute;
+        color: black;
+        top:220px;
+     left: 1285px;
+     font-size: 40px;
+
+    }
+
+    #result3{
+        position: absolute;
+        color: black;
+        top:280px;
+     left: 1285px;
+
+
+    }
+
+
+</style>
+ 
+</head>
+<body >
+
+
+      <h1 align="center">   Лабораторная установка для работ №2-5 (Потенциал поля) </h1> 
+      <hr>
+      
+          <div id="line_height">
+              <img  src="images/line_height.png" height="695px" width="57px" alt="Динейка" >
+          </div>
+      
+          <div id="line_width">
+                  <img src="images/line_width.png"height="57px" width="1221px" alt="Линейка">
+              </div>
+      
+        <div id="work_1">
+                      <img src="images/work.png" alt="Линейка">
+           </div>
+      
+    
+          
+      
+
+        <div id="plus">
+            <img src="images/oval.png" height="113px" width="113px" alt="Плюс">
+    </div>
+
+    <div id="minus">
+            <img src="images/oval.png" height="113px" width="113px" alt="Минус">
+    </div>
+    <canvas id="setka" width="1210" height="680"></canvas>
+          <canvas  id="work" width="1210px " height="680">  
+            
+        </canvas>
+
+         <!-- <canvas  id="setka" width="1210px " height="680">  </canvas> -->
+         
+            <!--   <iframe src="top.html" name="topFrame" width="200" height="150" scrolling="yes" frameborder="yes"
+      
+                 style="position:absolute;
+                 top:180px;
+                 left: 1300px;"  
+              </iframe>--> 
+
+
+<div id="result"></div>
+<div id="result2"></div>
+<div id="result3"></div>
+
+
+
+<script>
+    $(document).ready(function(){
+    var c_canvas = document.getElementById("setka"); 
+    var context = c_canvas.getContext("2d");
+    for (var x = 0.5; x <= 1210; x += 18.89) { context.moveTo(x, 0); context.lineTo(x, 680); } 
+    for (var y = 0.5; y <= 680; y += 18.89) { context.moveTo(0, y); context.lineTo(1210, y); } 
+    context.strokeStyle = "#888"; 
+    context.stroke();
+    });
+    </script>
+
+<form> 
+        <button type="button" id='button_1'
+         class="button_position"> ИЗМЕРИТЬ </button>
+         
+        </form> 
+     
+    </form>
+
+
+<script >  // Подключение JS
+$("#work").click(function(e){
+var xClick = e.pageX - $(this).offset().left;
+var yClick = e.pageY - $(this).offset().top;
+var c_canvas = document.getElementById("setka"); 
+ var context = c_canvas.getContext("2d");
+ context.beginPath();
+ context.arc(xClick,yClick,3.5,0,Math.PI*2,true);
+context.fill();
+var xround=Math.round((xClick*0.0264 )*100)/100; //-1200.9448*0.0264
+var yround=(Math.round((yClick*0.0264 -680.3149606299*0.0264)*100)/100 )*(-1);
+ 
+
+
+ $.ajax({   // Отправка на сервер 
+
+
+      url: '/myfunc',
+      type: "post",
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify({ x: xClick, y: yClick}),
+      dataType: 'json',
+      success: function(result) {
+	    $('#result').html('X ='+ xround+'cm'+ ' Y=' +yround+'cm');
+        $('#result2').html('&phi; = '+ result.Phii+' B');
+        
+        $('#result3').append('<p> X ='+ xround +'cm'+' Y=' +yround +'cm'+' &phi; = '+ result.Phii +' B </p>');
+        
+        }
+           
+});
+});
+
+
+</script>
+
+
+</body>
+</html>
